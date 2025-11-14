@@ -5,11 +5,11 @@ import {
 	generateScheduleImage,
 	generateWeekImage,
 } from "../canvas/holst_generation.ts";
-import { getUser } from "../db/db_functions.ts";
+import { getUser } from "../config/database.js";
+import { loadSchedule } from "../config/scheduleLoader.js";
 import { keyboardWithPhoto } from "../keyboards.ts";
 
-const schedulePath = path.resolve("./files/schedule.json");
-const scheduleData = JSON.parse(fs.readFileSync(schedulePath, "utf-8"));
+const scheduleData = loadSchedule();
 
 export function registerCallbacksPicture(bot: Bot) {
 	bot.action(
@@ -74,7 +74,7 @@ export function registerCallbacksPicture(bot: Bot) {
 						if (user.role === "student") {
 							for (const faculty of Object.values(scheduleData.faculties)) {
 								const groupSchedule = (faculty as any)[user.group_or_name];
-								if (groupSchedule && groupSchedule[date]) {
+								if (groupSchedule?.[date]) {
 									dayLessons = groupSchedule[date];
 									break;
 								}

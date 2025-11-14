@@ -1,26 +1,15 @@
-import fs from "fs";
-import path from "path";
+import { loadSchedule } from "../config/scheduleLoader.js";
+import type { Lesson, TeacherLesson, User } from "../types/index.js";
 
-const schedulePath = path.resolve("./files/schedule.json");
-const scheduleData = JSON.parse(fs.readFileSync(schedulePath, "utf-8"));
-
-interface Lesson {
-	subject: string;
-	type?: string;
-	teacher?: string;
-	room?: string;
-	time: string;
-	group?: string;
-	faculty?: string;
-}
+const scheduleData = loadSchedule();
 
 export function formatScheduleForDay(userNameOrGroup: string, date: string) {
-	let lessons: Lesson[] = [];
+	let lessons: (Lesson | TeacherLesson)[] = [];
 
 	let foundAsStudent = false;
 	for (const faculty of Object.values(scheduleData.faculties)) {
-		const groupSchedule = (faculty as any)[userNameOrGroup];
-		if (groupSchedule && groupSchedule[date]) {
+		const groupSchedule = faculty[userNameOrGroup];
+		if (groupSchedule?.[date]) {
 			lessons = groupSchedule[date];
 			foundAsStudent = true;
 			break;
@@ -66,7 +55,10 @@ export function formatScheduleForDay(userNameOrGroup: string, date: string) {
 	return formattedLessons.join("\n\n");
 }
 
-export function formatScheduleForWeek(user: any, weekDates: string[]) {
+export function formatScheduleForWeek(
+	user: User | undefined,
+	weekDates: string[],
+) {
 	if (!user) return "Пользователь не найден.";
 
 	let result = "";
@@ -74,7 +66,7 @@ export function formatScheduleForWeek(user: any, weekDates: string[]) {
 	for (const date of weekDates) {
 		const dateNew = new Date(date);
 
-		if (dateNew.getDay() === 0) continue;
+		if (dateNew.getUTCDay() === 0) continue;
 
 		let daySchedule = "";
 

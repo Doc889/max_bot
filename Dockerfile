@@ -1,24 +1,27 @@
-# Нормальный Debian-образ без проблем с сетью
-FROM node:20
+# Multi-stage build для оптимизации
+FROM node:20-slim
 
-# Рабочая директория
+# Установка зависимостей для canvas
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Копируем основные файлы
-COPY package.json package-lock.json tsconfig.json ./
+# Копируем файлы зависимостей
+COPY package*.json ./
+COPY tsconfig.json ./
 
 # Устанавливаем зависимости
-RUN npm install
+RUN npm ci
 
-# Копируем исходники
+# Копируем исходный код
 COPY src ./src
 
-# Копируем файлы данных
-COPY src/files ./src/files
-
-# Если файла schedule.json нет — создаём
-RUN mkdir -p src/files && \
-    [ -f src/files/schedule.json ] || echo '{}' > src/files/schedule.json
-
-# Запуск генерации расписания и бота
-CMD ["sh", "-c", "npx tsx src/schedule_generation.ts && npx tsx src/index.ts"]
+# Генерируем расписание и запускаем бота
+CMD ["sh", "-c", "npm run generate && npm start"]
