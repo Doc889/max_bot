@@ -5,7 +5,9 @@
 	"scripts": {
 		"start": "ts-node src/bot.ts",
 		"build": "tsc",
-		"start:prod": "node dist/bot.js"
+		"start:prod": "node dist/bot.js",
+		"test": "vitest run",
+		"test:watch": "vitest"
 	},
 	"dependencies": {
 		"@maxhub/max-bot-api": "^0.2.1",
@@ -16,7 +18,9 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.3.5",
 		"@types/better-sqlite3": "^7.6.13",
+		"@types/jest": "^30.0.0",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.1.6"
+		"typescript": "^5.1.6",
+		"vitest": "^4.0.9"
 	}
 }
