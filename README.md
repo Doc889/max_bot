@@ -92,9 +92,6 @@ npm test
 # Одноразовый прогон всех тестов
 npm run test:run
 
-# UI интерфейс для тестов
-npm run test:ui
-
 # Генерация отчета о покрытии
 npm run test:coverage
 ```
@@ -165,9 +162,6 @@ npm run generate
 ```bash
 # Production режим
 npm start
-
-# Development режим с hot-reload
-npm run dev
 ```
 
 ### Docker
@@ -236,30 +230,6 @@ max_bot/
 └── package.json               # Зависимости и скрипты
 ```
 
-## 📋 NPM Scripts
-
-### Production
-```bash
-npm start              # Запуск бота
-npm run generate       # Генерация тестового расписания
-```
-
-### Development
-```bash
-npm run dev            # Режим разработки с hot-reload
-npm run lint           # Проверка кода
-npm run lint:fix       # Автоисправление проблем
-npm run format         # Форматирование кода
-```
-
-### Testing
-```bash
-npm test               # Интерактивный режим тестов
-npm run test:run       # Запуск всех тестов
-npm run test:ui        # UI для тестов
-npm run test:coverage  # Отчет о покрытии
-```
-
 ## 📄 Формат данных расписания
 
 Расписание хранится в JSON формате в `src/files/schedule.json`:
@@ -305,16 +275,6 @@ npm run test:coverage  # Отчет о покрытии
 }
 ```
 
-### Переменные окружения
-
-```bash
-# Обязательные
-BOT_TOKEN=your_maxhub_bot_token
-
-# Опциональные
-SCHEDULE_FILE_PATH=/path/to/custom/schedule.json  # По умолчанию: src/files/schedule.json
-```
-
 ## 🎯 Команды бота
 
 | Команда | Описание |
@@ -325,11 +285,12 @@ SCHEDULE_FILE_PATH=/path/to/custom/schedule.json  # По умолчанию: src
 ### Интерактивные кнопки
 
 После выбора роли (студент/преподаватель):
-- **📅 Расписание на день** - текущее расписание
-- **📆 Расписание на неделю** - расписание на всю неделю
+- **🔽 Сегодня** - расписание на текущий день
+- **⏩ Завтра** - расписание на следующий день
+- **⏮ Эта неделя** - расписание на текущую неделю
+- **⏭ След. неделя** - расписание на следующую неделю
 - **⚙️ Настройки** - изменение группы/преподавателя
-- **🎨 Формат вывода** - текст или изображение
-
+- **Картинкой** - генерация изображения с расписанием
 ## 🔧 Best Practices
 
 ### Код
@@ -364,5 +325,3 @@ SCHEDULE_FILE_PATH=/path/to/custom/schedule.json  # По умолчанию: src
 ---
 
 **Создано с ❤️ для хакатона VK Educatoin**
-
-[![TypeScript](https://img.shields.io/badge/Made%20with-TypeScript-blue.svg)](https://www.typescriptlang.org/)
