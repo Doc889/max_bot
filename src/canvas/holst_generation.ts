@@ -1,5 +1,42 @@
 import { type CanvasRenderingContext2D, createCanvas } from "canvas";
-import fs from "fs";
+import type { Lesson, LessonType, TeacherLesson } from "../types/index.js";
+
+// Константы для генерации изображения на день
+const DAY_CANVAS = {
+	WIDTH: 1000,
+	LINE_HEIGHT: 38,
+	BLOCK_SPACING: 20,
+	PADDING: 50,
+	TITLE_HEIGHT: 80,
+	FONT_SIZE_TITLE: 64,
+	FONT_SIZE_DATE: 38,
+	FONT_SIZE_TEXT: 30,
+} as const;
+
+// Константы для генерации изображения на неделю
+const WEEK_CANVAS = {
+	WIDTH: 2500,
+	PADDING: 60,
+	COLUMN_GAP: 120,
+	LINE_HEIGHT: 64,
+	BLOCK_SPACING: 40,
+	TITLE_HEIGHT: 120,
+	TEMP_HEIGHT: 6000,
+	FONT_SIZE_TITLE: 80,
+	FONT_SIZE_DATE: 56,
+	FONT_SIZE_TEXT: 48,
+} as const;
+
+// Цвета для типов занятий
+const LESSON_TYPE_COLORS: Record<string, string> = {
+	лекция: "#4dacffff",
+	"практическое занятие": "#6cb408ff",
+	"лабораторная работа": "#d501ffff",
+};
+
+function getLessonColor(lessonType: string): string {
+	return LESSON_TYPE_COLORS[lessonType.toLowerCase()] || "#63d814ff";
+}
 
 function wrapText(
 	ctx: CanvasRenderingContext2D,
@@ -32,15 +69,15 @@ function wrapText(
 }
 
 export function generateScheduleImage(
-	lessons: any[],
+	lessons: Lesson[] | TeacherLesson[],
 	dateStr: string,
 	group: string,
 ) {
-	const canvasWidth = 1000;
-	const lineHeight = 38;
-	const blockSpacing = 20;
-	const padding = 50;
-	const titleHeight = 80;
+	const canvasWidth = DAY_CANVAS.WIDTH;
+	const lineHeight = DAY_CANVAS.LINE_HEIGHT;
+	const blockSpacing = DAY_CANVAS.BLOCK_SPACING;
+	const padding = DAY_CANVAS.PADDING;
+	const titleHeight = DAY_CANVAS.TITLE_HEIGHT;
 
 	let totalLines = 0;
 	lessons.forEach((lesson) => {
@@ -80,16 +117,16 @@ export function generateScheduleImage(
 	const formattedDate = `${weekdayName}, ${day}.${month}`;
 
 	ctx.fillStyle = "#333";
-	ctx.font = "bold 64px sans-serif";
+	ctx.font = `bold ${DAY_CANVAS.FONT_SIZE_TITLE}px sans-serif`;
 	ctx.fillText(group, padding, padding + 40);
 
-	ctx.font = "bold 38px sans-serif";
+	ctx.font = `bold ${DAY_CANVAS.FONT_SIZE_DATE}px sans-serif`;
 	ctx.fillText(formattedDate, padding, padding + 90);
 
 	let currentY = padding + titleHeight + 60;
 
 	ctx.fillStyle = "#000";
-	ctx.font = "30px sans-serif";
+	ctx.font = `${DAY_CANVAS.FONT_SIZE_TEXT}px sans-serif`;
 
 	lessons.forEach((lesson, i) => {
 		ctx.fillStyle = "black";
@@ -108,18 +145,7 @@ export function generateScheduleImage(
 				lineHeight,
 			) + lineHeight;
 
-		let rectColor = "green";
-		switch ((lesson.type || "Лекция").toLowerCase()) {
-			case "лекция":
-				rectColor = "#4dacffff";
-				break;
-			case "практическое занятие":
-				rectColor = "#6cb408ff";
-				break;
-			case "лабораторная работа":
-				rectColor = "#d501ffff";
-				break;
-		}
+		const rectColor = getLessonColor(lesson.type || "Лекция");
 
 		const rectX = padding;
 		const rectY = currentY - lineHeight - 25;
@@ -165,21 +191,21 @@ export function generateScheduleImage(
 }
 
 export function generateWeekImage(
-	lessonsByDay: { date: string; lessons: any[] }[],
+	lessonsByDay: { date: string; lessons: Lesson[] | TeacherLesson[] }[],
 	group: string,
 ) {
-	const width = 2500;
-	const padding = 60;
-	const columnGap = 120;
-	const lineHeight = 64;
-	const blockSpacing = 40;
-	const titleHeight = 120;
+	const width = WEEK_CANVAS.WIDTH;
+	const padding = WEEK_CANVAS.PADDING;
+	const columnGap = WEEK_CANVAS.COLUMN_GAP;
+	const lineHeight = WEEK_CANVAS.LINE_HEIGHT;
+	const blockSpacing = WEEK_CANVAS.BLOCK_SPACING;
+	const titleHeight = WEEK_CANVAS.TITLE_HEIGHT;
 
 	const half = Math.ceil(lessonsByDay.length / 2);
 	const leftColumnDays = lessonsByDay.slice(0, half);
 	const rightColumnDays = lessonsByDay.slice(half);
 
-	const tempHeight = 6000;
+	const tempHeight = WEEK_CANVAS.TEMP_HEIGHT;
 	const columnWidth = (width - columnGap - padding * 2) / 2;
 	const canvas = createCanvas(width, tempHeight);
 	const ctx = canvas.getContext("2d");
@@ -188,7 +214,7 @@ export function generateWeekImage(
 	ctx.fillRect(0, 0, width, tempHeight);
 
 	ctx.fillStyle = "#333";
-	ctx.font = "bold 80px sans-serif";
+	ctx.font = `bold ${WEEK_CANVAS.FONT_SIZE_TITLE}px sans-serif`;
 	ctx.fillText(group, padding, padding + 40);
 
 	let maxUsedY = 0;
@@ -213,11 +239,11 @@ export function generateWeekImage(
 			const formattedDate = `${weekdayName}, ${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}`;
 
 			ctx.fillStyle = "#333";
-			ctx.font = "bold 56px sans-serif";
+			ctx.font = `bold ${WEEK_CANVAS.FONT_SIZE_DATE}px sans-serif`;
 			ctx.fillText(formattedDate, startX, currentY - 15);
 
 			currentY += 60;
-			ctx.font = "48px sans-serif";
+			ctx.font = `${WEEK_CANVAS.FONT_SIZE_TEXT}px sans-serif`;
 
 			day.lessons.forEach((lesson, i) => {
 				const startY = currentY;
@@ -269,18 +295,7 @@ export function generateWeekImage(
 				);
 
 				const endY = currentY - 10;
-				let rectColor = "#63d814ff";
-				switch ((lesson.type || "Лекция").toLowerCase()) {
-					case "лекция":
-						rectColor = "#4dacffff";
-						break;
-					case "практическое занятие":
-						rectColor = "#6cb408ff";
-						break;
-					case "лабораторная работа":
-						rectColor = "#d501ffff";
-						break;
-				}
+				const rectColor = getLessonColor(lesson.type || "Лекция");
 
 				const rectX = startX + 5;
 				const rectY = startY + 25;

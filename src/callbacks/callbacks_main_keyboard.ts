@@ -1,21 +1,12 @@
 import type { Bot } from "@maxhub/max-bot-api";
-import fs from "fs";
-import path from "path";
 import {
 	formatScheduleForDay,
 	formatScheduleForWeek,
 } from "../canvas/format_text_functions.ts";
-import { getUser } from "../db/db_functions.ts";
+import { getUser } from "../config/database.js";
 import { keyboardWithPhoto, mainKeyboard } from "../keyboards.ts";
 import { ru_lexicon } from "../LEXICON/ru_lexicon.ts";
-import {
-	getScheduleForUser,
-	getWeekDates,
-	getWeekSchedule,
-} from "../schedule/get_functions.ts";
-
-const schedulePath = path.resolve("./files/schedule.json");
-const scheduleData = JSON.parse(fs.readFileSync(schedulePath, "utf-8"));
+import { getWeekDates } from "../utils/date.js";
 
 export function registerCallbacksMainKeyboard(bot: Bot) {
 	bot.action("today", (ctx) => {

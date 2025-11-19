@@ -4,11 +4,15 @@ import { registerCallbacksMainKeyboard } from "./callbacks/callbacks_main_keyboa
 import { registerCallbacksPicture } from "./callbacks/callbacks_picture.ts";
 import { registerCallbacksSettings } from "./callbacks/callbacks_settings.ts";
 import { registerUserHandlers } from "./handlers/user_handler.ts";
+import { logger } from "./utils/logger.js";
 
 dotenv.config();
 
 const token = process.env.BOT_TOKEN;
-if (!token) throw new Error("BOT_TOKEN не задан");
+if (!token) {
+	logger.error("BOT_TOKEN не задан в .env файле");
+	throw new Error("BOT_TOKEN не задан");
+}
 
 export const bot: Bot = new Bot(token);
 
@@ -18,4 +22,4 @@ registerCallbacksSettings(bot);
 registerUserHandlers(bot);
 
 bot.start();
-console.log("✅ Бот запущен");
+logger.info("Бот успешно запущен");

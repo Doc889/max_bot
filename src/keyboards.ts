@@ -1,11 +1,9 @@
 import { Keyboard } from "@maxhub/max-bot-api";
-import fs from "fs";
-import path from "path";
+import { loadSchedule } from "./config/scheduleLoader.js";
 
-const schedulePath = path.resolve("./files/schedule.json");
-const scheduleData = JSON.parse(fs.readFileSync(schedulePath, "utf-8"));
+const scheduleData = loadSchedule();
 
-export const mainKeyboard: any = Keyboard.inlineKeyboard([
+export const mainKeyboard = Keyboard.inlineKeyboard([
 	[
 		Keyboard.button.callback("🔽 Сегодня", "today"),
 		Keyboard.button.callback("⏩ Завтра", "tomorrow"),
@@ -34,7 +32,7 @@ export function keyboardWithPhoto(
 	]);
 }
 
-export const teacherStudentKeyboard: any = Keyboard.inlineKeyboard([
+export const teacherStudentKeyboard = Keyboard.inlineKeyboard([
 	[
 		Keyboard.button.callback("Студент", "student"),
 		Keyboard.button.callback("Преподаватель", "teacher"),
@@ -42,20 +40,20 @@ export const teacherStudentKeyboard: any = Keyboard.inlineKeyboard([
 ]);
 
 const faculties = Object.keys(scheduleData.faculties);
-export const facultiesKeyboard: any = Keyboard.inlineKeyboard(
+export const facultiesKeyboard = Keyboard.inlineKeyboard(
 	faculties.map((faculty) => [
 		Keyboard.button.callback(faculty, `faculty_${faculty}`),
 	]),
 );
 
-export function groupsKeyboard(groups: string) {
+export function groupsKeyboard(groups: string[]) {
 	return Keyboard.inlineKeyboard(
 		groups.map((group) => [Keyboard.button.callback(group, `group_${group}`)]),
 	);
 }
 
 const teachers = Object.keys(scheduleData.teachers);
-export const teacherKeyboard: any = Keyboard.inlineKeyboard(
+export const teacherKeyboard = Keyboard.inlineKeyboard(
 	teachers.map((teacher) => [
 		Keyboard.button.callback(teacher, `teacher_${teacher}`),
 	]),

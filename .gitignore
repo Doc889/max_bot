@@ -1,0 +1,51 @@
+# Node modules
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+logs/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# User-uploaded schedule file
+src/files/schedule.json
+
+# Temporary files
+src/temp/
+temp/
+*.tmp
+
+# VS Code settings
+.vscode/
+
+# Other IDE
+.idea/
+*.swp
+*.swo
+*~
+
+# Optional MacOS files
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+
+# Test coverage
+coverage/
+.nyc_output/

@@ -1,5 +1,5 @@
 import type { Bot } from "@maxhub/max-bot-api";
-import { deleteUser, getUser } from "../db/db_functions.ts";
+import { deleteUser, getUser } from "../config/database.js";
 import {
 	facultiesKeyboard,
 	mainKeyboard,
